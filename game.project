@@ -2,7 +2,7 @@
 title = LOWREZJAM
 version = 1.0
 dependencies = 
-custom_resources = lowrezjam
+custom_resources = 
 
 [bootstrap]
 main_collection = /game/game.collectionc
@@ -35,4 +35,7 @@ subpixels = 1
 
 [label]
 subpixels = 1
+
+[library]
+include_dirs = lowrezjam
 
