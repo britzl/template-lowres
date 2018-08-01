@@ -1,0 +1,27 @@
+images {
+  image: "/assets/images/logo.png"
+}
+images {
+  image: "/assets/images/heart.png"
+}
+images {
+  image: "/assets/images/Steam_A_Round.png"
+}
+images {
+  image: "/assets/images/Steam_B_Round.png"
+}
+images {
+  image: "/assets/images/Steam_Down_Round.png"
+}
+images {
+  image: "/assets/images/Steam_Left_Round.png"
+}
+images {
+  image: "/assets/images/Steam_Right_Round.png"
+}
+images {
+  image: "/assets/images/Steam_Up_Round.png"
+}
+margin: 0
+extrude_borders: 1
+inner_padding: 0

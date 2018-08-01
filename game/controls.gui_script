@@ -1,0 +1,30 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.buttons = {
+		[hash("attack")] = gui.get_node("button_a"),
+		[hash("jump")] = gui.get_node("button_b"),
+		[hash("left")] = gui.get_node("button_left"),
+		[hash("right")] = gui.get_node("button_right"),
+		[hash("up")] = gui.get_node("button_up"),
+		[hash("down")] = gui.get_node("button_down"),
+	}
+end
+
+local function handle_touch(self, touch)
+	for action,button in pairs(self.buttons) do
+		if gui.pick_node(button, touch.x, touch.y) then
+			msg.post("game", "handle_action", { action = action })
+			return
+		end
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("multi") then
+		for _,tp in pairs(action.touch or {}) do
+			handle_touch(self, tp)
+		end
+	elseif action_id == hash("touch") and (action.pressed or action.repeated) then
+		handle_touch(self, action)
+	end
+end

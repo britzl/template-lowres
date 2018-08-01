@@ -1,0 +1,50 @@
+local ATTACK = hash("attack")
+local JUMP = hash("jump")
+local LEFT = hash("left")
+local RIGHT = hash("right")
+local UP = hash("up")
+local DOWN = hash("down")
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	go.animate("logo", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360, go.EASING_LINEAR, 5)
+	particlefx.play("stars#stars")
+	self.actions = {}
+end
+
+function update(self, dt)
+	if self.actions[LEFT] then
+		print("left")
+	elseif self.actions[RIGHT] then
+		print("right")
+	end
+	if self.actions[UP] then
+		print("up")
+	elseif self.actions[DOWN] then
+		print("down")
+	end
+	if self.actions[ATTACK] then
+		print("attack")
+	end
+	if self.actions[JUMP] then
+		print("jump")
+	end
+	self.actions = {}
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("handle_action") then
+		self.actions[message.action] = true
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id and (action.pressed or action.repeated) then
+		self.actions[action_id] = true
+	end
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Remove this function if not needed
+end
