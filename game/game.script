@@ -13,15 +13,16 @@ function init(self)
 end
 
 function update(self, dt)
+	local pos = go.get_position("logo")
 	if self.actions[LEFT] then
-		print("left")
+		pos.x = pos.x - 10 * dt
 	elseif self.actions[RIGHT] then
-		print("right")
+		pos.x = pos.x + 10 * dt
 	end
 	if self.actions[UP] then
-		print("up")
+		pos.y = pos.y + 10 * dt
 	elseif self.actions[DOWN] then
-		print("down")
+		pos.y = pos.y - 10 * dt
 	end
 	if self.actions[ATTACK] then
 		print("attack")
@@ -29,6 +30,7 @@ function update(self, dt)
 	if self.actions[JUMP] then
 		print("jump")
 	end
+	go.set_position(pos, "logo")
 	self.actions = {}
 end
 
