@@ -1,7 +1,7 @@
 # lowrezjam-template
 Defold template project for [LOWREZJAM-2018](https://itch.io/jam/lowrezjam-2018)
 
-HTML5 demo: https://britzl.github.io/LOWREZJAM
+HTML5 demo: https://britzl.github.io/LOWREZJAM/
 
 # Contents
 
