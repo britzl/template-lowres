@@ -1,8 +1,9 @@
-local SIZE = 64
+local WIDTH = 64
+local HEIGHT = 64
 
 
 local IDENTITY = vmath.matrix4()
-local LOWREZ_PROJECTION = vmath.matrix4_orthographic(0, SIZE, 0, SIZE, -1, 1)
+local LOWREZ_PROJECTION = vmath.matrix4_orthographic(0, WIDTH, 0, HEIGHT, -1, 1)
 
 function init(self)
 	self.tile_pred = render.predicate({"tile"})
@@ -13,12 +14,13 @@ function init(self)
 	self.controls_pred = render.predicate({"controls"})
 
 	self.view = IDENTITY
+	--self.projection = LOWREZ_PROJECTION
 
 	-- render target buffer parameters
 	local color_params = {
 		format = render.FORMAT_RGBA,
-		width = SIZE,
-		height = SIZE,
+		width = WIDTH,
+		height = HEIGHT,
 		min_filter = render.FILTER_NEAREST,
 		mag_filter = render.FILTER_NEAREST,
 		u_wrap = render.WRAP_CLAMP_TO_EDGE,
@@ -26,8 +28,8 @@ function init(self)
 	}
 	local depth_params = {
 		format = render.FORMAT_DEPTH,
-		width = SIZE,
-		height = SIZE,
+		width = WIDTH,
+		height = HEIGHT,
 		u_wrap = render.WRAP_CLAMP_TO_EDGE,
 		v_wrap = render.WRAP_CLAMP_TO_EDGE
 	}
@@ -59,7 +61,7 @@ end
 local function draw_game(self)
 	clear(self, render.get_window_width(), render.get_window_height())
 	
-	render.set_viewport(0, 0, SIZE, SIZE)
+	render.set_viewport(0, 0, WIDTH, HEIGHT)
 
 	-- draw world (sprites, tiles, pfx etc)
 	render.set_depth_mask(false)
@@ -88,12 +90,12 @@ local function draw_upscaled(self)
 	-- calculate zoom
 	local window_width = render.get_window_width()
 	local window_height = render.get_window_height()
-	local zoom = math.min(window_width / SIZE, window_height / SIZE)
+	local zoom = math.min(window_width / WIDTH, window_height / HEIGHT)
 	zoom = math.max(1, math.floor(zoom))
 
 	-- positioning
-	local width = SIZE * zoom
-	local height = SIZE * zoom
+	local width = WIDTH * zoom
+	local height = HEIGHT * zoom
 	local width_halved = width / 2
 	local height_halved = height / 2
 	local offsetx = (window_width - width) / 2
