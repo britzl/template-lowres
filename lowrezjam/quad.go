@@ -2,7 +2,7 @@ embedded_components {
   id: "model"
   type: "model"
   data: "mesh: \"/lowrezjam/models/quad.dae\"\n"
-  "material: \"/lowrezjam/materials/lowrez.material\"\n"
+  "material: \"/lowrezjam/materials/lowrez/lowrez.material\"\n"
   "skeleton: \"\"\n"
   "animations: \"\"\n"
   "default_animation: \"\"\n"

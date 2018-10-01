@@ -1,7 +1,7 @@
 name: "lowrez"
 tags: "lowrez"
-vertex_program: "/lowrezjam/materials/lowrez.vp"
-fragment_program: "/lowrezjam/materials/lowrez.fp"
+vertex_program: "/lowrezjam/materials/lowrez/lowrez.vp"
+fragment_program: "/lowrezjam/materials/lowrez/lowrez.fp"
 vertex_constants {
   name: "mtx_view"
   type: CONSTANT_TYPE_VIEW
@@ -43,7 +43,7 @@ fragment_constants {
   }
 }
 samplers {
-  name: "tex0"
+  name: "DIFFUSE_TEXTURE"
   wrap_u: WRAP_MODE_CLAMP_TO_EDGE
   wrap_v: WRAP_MODE_CLAMP_TO_EDGE
   filter_min: FILTER_MODE_MIN_NEAREST
