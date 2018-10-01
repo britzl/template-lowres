@@ -22,6 +22,14 @@ key_trigger {
   input: KEY_X
   action: "jump"
 }
+key_trigger {
+  input: KEY_1
+  action: "material1"
+}
+key_trigger {
+  input: KEY_2
+  action: "material2"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_LEFT
   action: "touch"

@@ -45,6 +45,8 @@ function init(self)
 		[render.BUFFER_DEPTH_BIT] = 1,
 		[render.BUFFER_STENCIL_BIT] = 0
 	}
+
+	self.upscale_material = hash("lowrez")
 end
 
 
@@ -106,7 +108,9 @@ local function draw_upscaled(self)
 	render.set_view(IDENTITY)
 	render.set_projection(IDENTITY)
 	render.enable_texture(0, self.rt, render.BUFFER_COLOR_BIT)
+	render.enable_material(self.upscale_material)
 	render.draw(self.lowrez_pred)
+	render.disable_material()
 	render.disable_texture(0, self.rt)
 end
 
@@ -136,5 +140,8 @@ function on_message(self, message_id, message)
 		self.clear_buffers[render.BUFFER_COLOR_BIT] = message.color
 	elseif message_id == hash("set_view_projection") then
 		self.view = message.view
+	elseif message_id == hash("set_upscale_material") then
+		print("set_upscale_material", message.material)
+		self.upscale_material = message.material
 	end
 end
