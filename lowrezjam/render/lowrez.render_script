@@ -47,6 +47,7 @@ function init(self)
 	}
 
 	self.upscale_material = hash("lowrez")
+	self.scale_snap = true
 end
 
 
@@ -93,13 +94,11 @@ local function draw_upscaled(self)
 	local window_width = render.get_window_width()
 	local window_height = render.get_window_height()
 	local zoom = math.min(window_width / WIDTH, window_height / HEIGHT)
-	zoom = math.max(1, math.floor(zoom))
+	if self.scale_snap then zoom = math.max(1, math.floor(zoom)) end
 
 	-- positioning
 	local width = WIDTH * zoom
 	local height = HEIGHT * zoom
-	local width_halved = width / 2
-	local height_halved = height / 2
 	local offsetx = (window_width - width) / 2
 	local offsety = (window_height - height) / 2
 
@@ -108,8 +107,11 @@ local function draw_upscaled(self)
 	render.set_view(IDENTITY)
 	render.set_projection(IDENTITY)
 	render.enable_texture(0, self.rt, render.BUFFER_COLOR_BIT)
+	local constants = render.constant_buffer()
+	constants.sharpness = vmath.vector4(9.9, 1.0, 1.0, 1.0)
+	constants.texture_size = vmath.vector4(WIDTH, HEIGHT, 1.0, 1.0)
 	render.enable_material(self.upscale_material)
-	render.draw(self.lowrez_pred)
+	render.draw(self.lowrez_pred, constants)
 	render.disable_material()
 	render.disable_texture(0, self.rt)
 end
@@ -143,5 +145,11 @@ function on_message(self, message_id, message)
 	elseif message_id == hash("set_upscale_material") then
 		print("set_upscale_material", message.material)
 		self.upscale_material = message.material
+	elseif message_id == hash("toggle_scale_snap") then
+		if self.scale_snap then
+			self.scale_snap = false
+		else
+			self.scale_snap = true
+		end
 	end
 end
