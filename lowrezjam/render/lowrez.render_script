@@ -33,7 +33,18 @@ function init(self)
 		u_wrap = render.WRAP_CLAMP_TO_EDGE,
 		v_wrap = render.WRAP_CLAMP_TO_EDGE
 	}
-	self.rt = render.render_target("lowrez", { [render.BUFFER_COLOR_BIT] = color_params, [render.BUFFER_DEPTH_BIT] = depth_params })
+	local stencil_params = {
+		format = render.FORMAT_STENCIL,
+		width = WIDTH,
+		height = HEIGHT,
+		u_wrap = render.WRAP_CLAMP_TO_EDGE,
+		v_wrap = render.WRAP_CLAMP_TO_EDGE
+	}
+	self.rt = render.render_target("lowrez", {
+		[render.BUFFER_COLOR_BIT] = color_params,
+		[render.BUFFER_DEPTH_BIT] = depth_params,
+		[render.BUFFER_STENCIL_BIT] = stencil_params
+	})
 
 	local clear_color = vmath.vector4(0, 0, 0, 0)
 	clear_color.x = sys.get_config("render.clear_color_red", 0)
