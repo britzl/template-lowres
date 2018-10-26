@@ -103,6 +103,7 @@ local function draw_upscaled(self)
 
 	-- draw!
 	render.disable_state(render.STATE_BLEND)
+	render.set_viewport(offsetx, offsety, width, height)
 	render.set_view(IDENTITY)
 	render.set_projection(IDENTITY)
 	render.enable_texture(0, self.rt, render.BUFFER_COLOR_BIT)
