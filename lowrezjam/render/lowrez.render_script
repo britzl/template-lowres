@@ -102,8 +102,7 @@ local function draw_upscaled(self)
 	local offsety = (window_height - height) / 2
 
 	-- draw!
-	render.set_blend_func(render.BLEND_SRC_ALPHA, render.BLEND_ONE_MINUS_SRC_ALPHA)
-	render.set_viewport(offsetx, offsety, width, height)
+	render.disable_state(render.STATE_BLEND)
 	render.set_view(IDENTITY)
 	render.set_projection(IDENTITY)
 	render.enable_texture(0, self.rt, render.BUFFER_COLOR_BIT)
