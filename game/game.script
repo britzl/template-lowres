@@ -5,6 +5,11 @@ local RIGHT = hash("right")
 local UP = hash("up")
 local DOWN = hash("down")
 
+local SET_MATERIAL_ACTIONS = {
+	[hash("material1")] = hash("lowrez"),
+	[hash("material2")] = hash("sps"),
+}
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	go.animate("logo", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360, go.EASING_LINEAR, 5)
@@ -41,7 +46,12 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
-	if action_id and (action.pressed or action.repeated) then
+	if action_id and SET_MATERIAL_ACTIONS[action_id] then
+		if action.pressed then
+			print(SET_MATERIAL_ACTIONS[action_id])
+			msg.post("@render:", "set_upscale_material", { material = SET_MATERIAL_ACTIONS[action_id] })
+		end
+	elseif action_id and (action.pressed or action.repeated) then
 		self.actions[action_id] = true
 	end
 end
