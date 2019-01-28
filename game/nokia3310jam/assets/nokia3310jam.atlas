@@ -1,0 +1,6 @@
+images {
+  image: "/game/nokia3310jam/assets/images/nokiascreen.png"
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

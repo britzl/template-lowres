@@ -1,0 +1,3 @@
+function init(self)
+	msg.post("@render:", "set_size", { width = 64, height = 64 })
+end

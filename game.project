@@ -5,7 +5,7 @@ dependencies =
 custom_resources = 
 
 [bootstrap]
-main_collection = /game/game.collectionc
+main_collection = /game/lowrezjam/lowrezjam_game.collectionc
 render = /lowrezjam/render/lowrez.renderc
 
 [input]
