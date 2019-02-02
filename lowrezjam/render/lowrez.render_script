@@ -165,6 +165,7 @@ function on_message(self, message_id, message)
 		self.clear_buffers[render.BUFFER_COLOR_BIT] = message.color
 	elseif message_id == SET_VIEW_PROJECTION then
 		self.view = message.view
+		self.lowrez_projection = message.projection
 	elseif message_id == SET_UPSCALE_MATERIAL then
 		self.upscale_material = message.material
 	elseif message_id == TOGGLE_SCALE_SNAP then

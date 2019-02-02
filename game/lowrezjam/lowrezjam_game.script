@@ -12,6 +12,8 @@ local SET_MATERIAL_ACTIONS = {
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
+	--msg.post("perspectivecamera", "acquire_camera_focus")
+	--go.animate("perspectivecamera", "position.z", go.PLAYBACK_LOOP_PINGPONG, 64, go.EASING_INOUTQUAD, 4)
 	go.animate("logo", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360, go.EASING_LINEAR, 5)
 	particlefx.play("stars#stars")
 	self.actions = {}
