@@ -12,24 +12,23 @@ local SET_MATERIAL_ACTIONS = {
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	--msg.post("perspectivecamera", "acquire_camera_focus")
-	--go.animate("perspectivecamera", "position.z", go.PLAYBACK_LOOP_PINGPONG, 64, go.EASING_INOUTQUAD, 4)
+	msg.post("camera#camera", "acquire_camera_focus")
 	go.animate("logo", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360, go.EASING_LINEAR, 5)
 	particlefx.play("stars#stars")
 	self.actions = {}
 end
 
 function update(self, dt)
-	local pos = go.get_position("logo")
+	local pos = go.get_position()
 	if self.actions[LEFT] then
-		pos.x = pos.x - 10 * dt
+		pos.x = pos.x - 20 * dt
 	elseif self.actions[RIGHT] then
-		pos.x = pos.x + 10 * dt
+		pos.x = pos.x + 20 * dt
 	end
 	if self.actions[UP] then
-		pos.y = pos.y + 10 * dt
+		pos.y = pos.y + 20 * dt
 	elseif self.actions[DOWN] then
-		pos.y = pos.y - 10 * dt
+		pos.y = pos.y - 20 * dt
 	end
 	if self.actions[ATTACK] then
 		print("attack")
@@ -37,7 +36,7 @@ function update(self, dt)
 	if self.actions[JUMP] then
 		print("jump")
 	end
-	go.set_position(pos, "logo")
+	go.set_position(pos)
 	self.actions = {}
 end
 
