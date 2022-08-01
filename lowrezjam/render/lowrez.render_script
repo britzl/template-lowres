@@ -134,7 +134,7 @@ local function draw_upscaled(self)
 	constants.sharpness = vmath.vector4(9.9, 1.0, 1.0, 1.0)
 	constants.texture_size = vmath.vector4(self.width, self.height, 1.0, 1.0)
 	render.enable_material(self.upscale_material)
-	render.draw(self.lowrez_pred, constants)
+	render.draw(self.lowrez_pred, { constants = constants} )
 	render.disable_material()
 	render.disable_texture(0, self.rt)
 end
