@@ -16,7 +16,7 @@ components {
 embedded_components {
   id: "model"
   type: "model"
-  data: "mesh: \"/builtins/assets/meshes/quad.dae\"\n"
+  data: "mesh: \"/builtins/assets/meshes/quad_2x2.dae\"\n"
   "material: \"/lowrezjam/materials/lowrez/lowrez.material\"\n"
   "skeleton: \"\"\n"
   "animations: \"\"\n"
