@@ -1,4 +1,4 @@
-# lowrez-template
+# template-lowres
 Defold template project for creation of low-res pixel art games. The project provides a render script for rendering the game to a low-res texture that will be centered and upscaled to fit the screen dimensions. The project also provides fonts for use in low resolution pixel art games.
 
 The template project also contains presets for the following formats:
@@ -6,16 +6,15 @@ The template project also contains presets for the following formats:
 * [LOWREZJAM-2018](https://itch.io/jam/lowrezjam-2018) - 64x64 pixel template with support for on-screen controls
 * [Nokia 3310 Jam](https://itch.io/jam/3310jam) - 84x48 pixel template
 
-
 HTML5 demo: https://britzl.github.io/LOWREZJAM/
 
 
 # Installation
 You can use the template in your own project by adding this project as a [Defold library dependency](http://www.defold.com/manuals/libraries/). Open your game.project file and in the dependencies field under project add:
 
-https://github.com/britzl/lowrezjam-template/archive/master.zip
+https://github.com/britzl/template-lowres/archive/master.zip
 
-Or point to the ZIP file of a [specific release](https://github.com/britzl/lowrezjam-template/releases).
+Or point to the ZIP file of a [specific release](https://github.com/britzl/template-lowres/releases).
 
 This repository is also available as a [GitHub Template repository](https://help.github.com/en/articles/creating-a-repository-from-a-template).
 
