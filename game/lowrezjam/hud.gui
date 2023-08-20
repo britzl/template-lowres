@@ -1,4 +1,4 @@
-script: ""
+script: "/game/lowrezjam/hover_hud_heart.gui_script"
 fonts {
   name: "pixelfont"
   font: "/lowrezjam/fonts/pixelfont.font"

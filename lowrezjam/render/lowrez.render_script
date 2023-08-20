@@ -6,10 +6,13 @@ local SET_SIZE = hash("set_size")
 
 local IDENTITY = vmath.matrix4()
 
+local coords = require "lowrezjam.render.coords"
+
 local function setup(self, width, height)
 	self.width = width
 	self.height = height
 	self.lowrez_projection = vmath.matrix4_orthographic(0, width, 0, height, -1, 1)
+	coords.game_width, coords.game_height = width, height
 
 	-- render target buffer parameters
 	local color_params = {
@@ -70,6 +73,10 @@ function init(self)
 
 	self.upscale_material = hash("lowrez")
 	self.scale_snap = true
+	coords.scale_snap = true
+	local window_width = render.get_window_width()
+	local window_height = render.get_window_height()
+	coords.window_width, coords.window_height = window_width, window_height
 end
 
 
@@ -154,7 +161,10 @@ local function draw_controls(self)
 end
 
 function update(self)
-	clear(self,	render.get_window_width(), render.get_window_height())
+	local window_width = render.get_window_width()
+	local window_height = render.get_window_height()
+	coords.window_width, coords.window_height = window_width, window_height
+	clear(self, window_width, window_height)
 	render.enable_render_target(self.rt)
 	draw_game(self)
 	render.disable_render_target(self.rt)
@@ -175,6 +185,7 @@ function on_message(self, message_id, message)
 		else
 			self.scale_snap = true
 		end
+		coords.scale_snap = self.scale_snap
 	elseif message_id == SET_SIZE then
 		setup(self, message.width, message.height)
 	end
