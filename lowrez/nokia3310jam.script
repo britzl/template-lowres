@@ -1,0 +1,9 @@
+go.property("width", 84)
+go.property("height", 48)
+go.property("snap", true)
+
+function init(self)
+	msg.post("@render:", "set_size", { width = self.width, height = self.height })
+	msg.post("@render:", "set_scale_snap", { snap = self.snap })
+	msg.post("@render:", "clear_color", { color = vmath.vector4(0xc7/255, 0xf0/255, 0xd8/255, 1.0) })
+end

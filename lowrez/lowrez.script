@@ -1,0 +1,8 @@
+go.property("width", 64)
+go.property("height", 64)
+go.property("snap", true)
+
+function init(self)
+	msg.post("@render:", "set_size", { width = self.width, height = self.height })
+	msg.post("@render:", "set_scale_snap", { snap = self.snap })
+end

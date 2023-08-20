@@ -1,6 +1,0 @@
-go.property("width", 64)
-go.property("height", 64)
-
-function init(self)
-	msg.post("@render:", "set_size", { width = self.width, height = self.height })
-end

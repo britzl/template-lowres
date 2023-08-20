@@ -1,9 +1,0 @@
-script: "/lowrezjam/render/lowrez.render_script"
-materials {
-  name: "lowrez"
-  material: "/lowrezjam/materials/lowrez/lowrez.material"
-}
-materials {
-  name: "sps"
-  material: "/lowrezjam/materials/sps/sps.material"
-}

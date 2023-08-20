@@ -1,0 +1,32 @@
+
+-- A sample script to demonstrate GUI node hovering with the mouse.
+
+local coords = require "lowrez.render.coords"
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.hearts = {}
+	for i=1,3 do
+		self.hearts[i] = gui.get_node("life"..i)
+	end
+end
+
+local function update_hover(self, x, y)
+	local hit_i, hit_heart
+	for i,heart in ipairs(self.hearts) do
+		if gui.pick_node(heart, x, y) then
+			gui.set_alpha(heart, 0.5)
+			hit_i, hit_heart = i, heart
+		else
+			gui.set_alpha(heart, 1)
+		end
+	end
+	return hit_i, hit_heart
+end
+
+function on_input(self, action_id, action)
+	if not action_id then
+		local px, py = coords.action_to_gui_pick(action.x, action.y)
+		update_hover(self, px, py)
+	end
+end

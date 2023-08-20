@@ -1,0 +1,9 @@
+script: "/lowrez/render/lowrez.render_script"
+materials {
+  name: "lowrez"
+  material: "/lowrez/materials/lowrez/lowrez.material"
+}
+materials {
+  name: "sps"
+  material: "/lowrez/materials/sps/sps.material"
+}
