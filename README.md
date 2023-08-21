@@ -35,8 +35,17 @@ The template provides a render script that renders to a low-res texture and upsc
 ## Changing low-res size
 Change the screen size by posting a `set_size` message to the render script with a `width` and `height` message property.
 
+```lua
+msg.post("@render:", "set_size", { width = 320, height = 240 })
+```
+
 ## Configure scale snapping
 The upscaled low-res texture will by default be scaled to fill as much of the window as possible. It is possible to ensure that the upscaled texture will have a zoom that is set to an integer value. You can toggling scale snapping via the `toggle_scale_snap` message or explicity set snapping using the `set_scale_snap` message with `snap` set to true or false.
+
+```lua
+msg.post("@render:", "toggle_scale_snap")
+msg.post("@render:", "set_scale_snap", { snap = true })
+```
 
 ## On screen controls
 The render script will also in a separate pass draw on-screen controls as per allowed rules for the jam. The on-screen controls must be a gui with material set to the provided `controls.material`.
