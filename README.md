@@ -21,18 +21,18 @@ This repository is also available as a [GitHub Template repository](https://help
 # Usage
 It is quite easy to setup and use the template:
 
-* Open `game.project` and use the render script instead of the default one from builtins.
+* Open `game.project` and use the render script (`lowrez/render/lowrez.render`) instead of the default one from builtins.
 * Add one of the provided game objects to your bootstrap collection
   * `lowrez/lowrezjam.go`
   * `lowrez/nokia3310jam.go`
   * `lowrez/custom.go`
 
-Expand the game object and configure how the graphics should render. You can modify `width`, `height` and `snap` (see below).
+Expand the game object, select the attached script component and configure how the graphics should render. You can modify `width`, `height` and `snap` (see below).
 
-## Use the render script
+## Lowrez render script
 The template provides a render script that renders to a low-res texture and upscales to fit screen dimensions. The texture will be centered in the window.
 
-## Changing low-res size
+## Changing size
 Change the screen size by posting a `set_size` message to the render script with a `width` and `height` message property.
 
 ```lua
