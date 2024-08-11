@@ -37,5 +37,5 @@ subpixels = 1
 subpixels = 1
 
 [library]
-include_dirs = lowrezjam
+include_dirs = lowrez
 
