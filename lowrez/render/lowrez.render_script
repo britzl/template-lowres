@@ -133,7 +133,6 @@ local function draw_upscaled(self)
 	local offsety = (window_height - height) / 2
 
 	-- draw!
-	render.disable_state(render.STATE_BLEND)
 	render.set_viewport(offsetx, offsety, width, height)
 	render.set_view(IDENTITY)
 	render.set_projection(IDENTITY)
@@ -159,6 +158,7 @@ local function draw_controls(self)
 	render.draw(self.controls_pred)
 	--render.draw(self.text_pred)
 	render.disable_state(render.STATE_STENCIL_TEST)
+	render.disable_state(render.STATE_BLEND)
 end
 
 function update(self)
