@@ -188,7 +188,7 @@ function on_message(self, message_id, message)
 		end
 		coords.scale_snap = self.scale_snap
 	elseif message_id == SET_SCALE_SNAP then
-		self.scale_snap = message.scale_snap
+		self.scale_snap = message.snap
 		coords.scale_snap = message.snap
 	elseif message_id == SET_SIZE then
 		setup(self, message.width, message.height)
