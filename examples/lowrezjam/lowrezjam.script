@@ -16,6 +16,8 @@ function init(self)
 	go.animate("logo", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360, go.EASING_LINEAR, 5)
 	particlefx.play("stars#stars")
 	self.actions = {}
+
+	label.set_text("/scale#label", "SCALE:" .. window.get_display_scale())
 end
 
 function update(self, dt)
