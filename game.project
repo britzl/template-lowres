@@ -39,3 +39,9 @@ subpixels = 1
 [library]
 include_dirs = lowrez
 
+[native_extension]
+app_manifest = /lowrez/test.appmanifest
+
+[html5]
+scale_mode = downscale_fit
+

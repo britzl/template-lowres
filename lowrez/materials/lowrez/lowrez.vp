@@ -1,16 +1,20 @@
+#version 140
 
 // positions are in world space
-attribute mediump vec4 position;
-attribute mediump vec2 texcoord0;
-attribute mediump vec3 normal;
+in highp vec4    position;
+in mediump vec2  texcoord0;
+in mediump vec3  normal;
 
-uniform mediump mat4 mtx_view;
-uniform mediump mat4 mtx_proj;
-uniform mediump mat4 mtx_normal;
+out highp vec4   var_position;
+out mediump vec3 var_normal;
+out mediump vec2 var_texcoord0;
 
-varying mediump vec4 var_position;
-varying mediump vec3 var_normal;
-varying mediump vec2 var_texcoord0;
+uniform vs_uniforms
+{
+    uniform mediump mat4 mtx_view;
+    uniform mediump mat4 mtx_proj;
+    uniform mediump mat4 mtx_normal;
+};
 
 void main()
 {
@@ -20,4 +24,3 @@ void main()
     var_normal = normalize((mtx_normal * vec4(normal, 0.0)).xyz);
     gl_Position = mtx_proj * p;
 }
-

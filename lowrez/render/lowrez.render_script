@@ -1,181 +1,225 @@
-local CLEAR_COLOR = hash("clear_color")
-local SET_VIEW_PROJECTION = hash("set_view_projection")
+local coords               = require "lowrez.render.coords"
+
+local CLEAR_COLOR          = hash("clear_color")
+local SET_VIEW_PROJECTION  = hash("set_view_projection")
 local SET_UPSCALE_MATERIAL = hash("set_upscale_material")
-local SET_SCALE_SNAP = hash("set_scale_snap")
-local TOGGLE_SCALE_SNAP = hash("toggle_scale_snap")
-local SET_SIZE = hash("set_size")
+local SET_SCALE_SNAP       = hash("set_scale_snap")
+local TOGGLE_SCALE_SNAP    = hash("toggle_scale_snap")
+local SET_SIZE             = hash("set_size")
+local IDENTITY             = vmath.matrix4()
 
-local IDENTITY = vmath.matrix4()
-
-local coords = require "lowrez.render.coords"
-
+------------------------
+-- setup
+------------------------
 local function setup(self, width, height)
-	self.width = width
-	self.height = height
+	self.width             = width
+	self.height            = height
 	self.lowrez_projection = vmath.matrix4_orthographic(0, width, 0, height, -1, 1)
-	coords.game_width, coords.game_height = width, height
+
+	coords.game_width      = width
+	coords.game_height     = height
 
 	-- render target buffer parameters
-	local color_params = {
-		format = render.FORMAT_RGBA,
-		width = width,
-		height = height,
-		min_filter = render.FILTER_NEAREST,
-		mag_filter = render.FILTER_NEAREST,
-		u_wrap = render.WRAP_CLAMP_TO_EDGE,
-		v_wrap = render.WRAP_CLAMP_TO_EDGE
+	local color_params     = {
+		format     = graphics.TEXTURE_FORMAT_RGBA,
+		width      = width,
+		height     = height,
+		min_filter = graphics.TEXTURE_FILTER_NEAREST,
+		mag_filter = graphics.TEXTURE_FILTER_NEAREST,
+		u_wrap     = graphics.TEXTURE_WRAP_CLAMP_TO_EDGE,
+		v_wrap     = graphics.TEXTURE_WRAP_CLAMP_TO_EDGE
 	}
-	local depth_params = {
-		format = render.FORMAT_DEPTH,
-		width = width,
+	local depth_params     = {
+		format = graphics.TEXTURE_FORMAT_DEPTH,
+		width  = width,
 		height = height,
-		u_wrap = render.WRAP_CLAMP_TO_EDGE,
-		v_wrap = render.WRAP_CLAMP_TO_EDGE
+		u_wrap = graphics.TEXTURE_WRAP_CLAMP_TO_EDGE,
+		v_wrap = graphics.TEXTURE_WRAP_CLAMP_TO_EDGE
 	}
-	local stencil_params = {
-		format = render.FORMAT_STENCIL,
-		width = width,
+	local stencil_params   = {
+		format = graphics.TEXTURE_FORMAT_STENCIL,
+		width  = width,
 		height = height,
-		u_wrap = render.WRAP_CLAMP_TO_EDGE,
-		v_wrap = render.WRAP_CLAMP_TO_EDGE
+		u_wrap = graphics.TEXTURE_WRAP_CLAMP_TO_EDGE,
+		v_wrap = graphics.TEXTURE_WRAP_CLAMP_TO_EDGE
 	}
+
 	if self.rt then
 		render.delete_render_target(self.rt)
 	end
+
 	self.rt = render.render_target("lowrez", {
-		[render.BUFFER_COLOR_BIT] = color_params,
-		[render.BUFFER_DEPTH_BIT] = depth_params,
-		[render.BUFFER_STENCIL_BIT] = stencil_params
+		[graphics.BUFFER_TYPE_COLOR0_BIT]  = color_params,
+		[graphics.BUFFER_TYPE_DEPTH_BIT]   = depth_params,
+		[graphics.BUFFER_TYPE_STENCIL_BIT] = stencil_params
 	})
+
+	--constants
+	self.constants = render.constant_buffer()
+	self.constants.sharpness = vmath.vector4(9.9, 1.0, 1.0, 1.0)
+	self.constants.texture_size = vmath.vector4(self.width, self.height, 1.0, 1.0)
+
+	-- draw options
+	self.draw_options = {
+		frustum = vmath.matrix4(),
+		constants = self.constants
+	}
 end
 
+------------------------
+-- init
+------------------------
 function init(self)
-	self.tile_pred = render.predicate({"tile"})
-	self.gui_pred = render.predicate({"gui"})
-	self.text_pred = render.predicate({"text"})
-	self.particle_pred = render.predicate({"particle"})
-	self.lowrez_pred = render.predicate({"lowrez"})
-	self.controls_pred = render.predicate({"controls"})
+	-- predicates
+	self.tile_pred     = render.predicate({ "tile" })
+	self.gui_pred      = render.predicate({ "gui" })
+	self.text_pred     = render.predicate({ "text" })
+	self.particle_pred = render.predicate({ "particle" })
+	self.lowrez_pred   = render.predicate({ "lowrez" })
+	self.controls_pred = render.predicate({ "controls" })
 
-	self.view = IDENTITY
+	self.view          = IDENTITY
 
+	-- Lowrez Setup
 	setup(self, 64, 64)
 
-	local clear_color = vmath.vector4(0, 0, 0, 0)
-	clear_color.x = sys.get_config("render.clear_color_red", 0)
-	clear_color.y = sys.get_config("render.clear_color_green", 0)
-	clear_color.z = sys.get_config("render.clear_color_blue", 0)
-	clear_color.w = sys.get_config("render.clear_color_alpha", 0)
-	self.clear_buffers = {
-		[render.BUFFER_COLOR_BIT] = clear_color,
-		[render.BUFFER_DEPTH_BIT] = 1,
-		[render.BUFFER_STENCIL_BIT] = 0
+	-- Clear Buffer
+	local clear_color     = vmath.vector4(0, 0, 0, 0)
+	clear_color.x         = sys.get_config_number("render.clear_color_red", 0)
+	clear_color.y         = sys.get_config_number("render.clear_color_green", 0)
+	clear_color.z         = sys.get_config_number("render.clear_color_blue", 0)
+	clear_color.w         = sys.get_config_number("render.clear_color_alpha", 0)
+
+	self.clear_buffers    = {
+		[graphics.BUFFER_TYPE_COLOR0_BIT]  = clear_color,
+		[graphics.BUFFER_TYPE_DEPTH_BIT]   = 1,
+		[graphics.BUFFER_TYPE_STENCIL_BIT] = 0
 	}
 
+	-- Upscale
 	self.upscale_material = hash("lowrez")
-	self.scale_snap = true
-	coords.scale_snap = true
-	local window_width = render.get_window_width()
-	local window_height = render.get_window_height()
-	coords.window_width, coords.window_height = window_width, window_height
+	self.scale_snap       = true
+	coords.scale_snap     = true
+
+	coords.window_width   = render.get_window_width()
+	coords.window_height  = render.get_window_height()
 end
 
-
-local function clear(self, w, h)
-	-- clear
+------------------------
+-- clear
+------------------------
+local function clear(self)
 	render.set_view(IDENTITY)
-	render.set_projection(vmath.matrix4_orthographic(0, w, 0, h, -1, 1))
+	render.set_projection(vmath.matrix4_orthographic(0, coords.window_width, 0, coords.window_height, -1, 1))
 	render.set_depth_mask(true)
 	render.set_stencil_mask(0xff)
 	render.clear(self.clear_buffers)
 end
 
-
+------------------------
+-- draw_game
+-- (sprites, tiles, pfx etc)
+------------------------
 local function draw_game(self)
-	clear(self, render.get_window_width(), render.get_window_height())
-	
+	clear(self)
+
 	render.set_viewport(0, 0, self.width, self.height)
 
-	-- draw world (sprites, tiles, pfx etc)
 	render.set_depth_mask(false)
-	render.disable_state(render.STATE_DEPTH_TEST)
-	render.disable_state(render.STATE_STENCIL_TEST)
-	render.disable_state(render.STATE_CULL_FACE)
-	render.enable_state(render.STATE_BLEND)
-	render.set_blend_func(render.BLEND_SRC_ALPHA, render.BLEND_ONE_MINUS_SRC_ALPHA)
+	render.disable_state(graphics.STATE_DEPTH_TEST)
+	render.disable_state(graphics.STATE_STENCIL_TEST)
+	render.disable_state(graphics.STATE_CULL_FACE)
+
+	render.enable_state(graphics.STATE_BLEND)
+	render.set_blend_func(graphics.BLEND_FACTOR_SRC_ALPHA, graphics.BLEND_FACTOR_ONE_MINUS_SRC_ALPHA)
+
 	render.set_view(self.view)
 	render.set_projection(self.lowrez_projection)
-	render.draw(self.tile_pred)
-	render.draw(self.particle_pred)
+
+	self.draw_options.frustum = self.lowrez_projection * self.view
+
+	render.draw(self.tile_pred, self.draw_options)
+	render.draw(self.particle_pred, self.draw_options)
 	render.draw_debug3d()
-	
+
+	------------------------
 	-- draw screen space gui
-	render.set_view(vmath.matrix4())
+	------------------------
+	render.set_view(IDENTITY)
 	render.set_projection(self.lowrez_projection)
-	render.enable_state(render.STATE_STENCIL_TEST)
-	render.draw(self.gui_pred)
-	render.draw(self.text_pred)
-	render.disable_state(render.STATE_STENCIL_TEST)
+
+	self.draw_options.frustum = self.lowrez_projection * IDENTITY
+
+	render.enable_state(graphics.STATE_STENCIL_TEST)
+	render.draw(self.gui_pred, self.draw_options)
+	render.draw(self.text_pred, self.draw_options)
+	render.disable_state(graphics.STATE_STENCIL_TEST)
 end
 
-
+------------------------
+-- draw_upscaled
+------------------------
 local function draw_upscaled(self)
-	-- calculate zoom
-	local window_width = render.get_window_width()
-	local window_height = render.get_window_height()
-	local zoom = math.min(window_width / self.width, window_height / self.height)
-	if self.scale_snap then zoom = math.max(1, math.floor(zoom)) end
-
-	-- positioning
-	local width = self.width * zoom
-	local height = self.height * zoom
-	local offsetx = (window_width - width) / 2
-	local offsety = (window_height - height) / 2
+	-- zoom and positioning
+	local zoom    = coords.get_zoom()
+	local width   = self.width * zoom
+	local height  = self.height * zoom
+	local offsetx = (coords.window_width - width) / 2
+	local offsety = (coords.window_height - height) / 2
 
 	-- draw!
 	render.set_viewport(offsetx, offsety, width, height)
 	render.set_view(IDENTITY)
 	render.set_projection(IDENTITY)
-	render.enable_texture(0, self.rt, render.BUFFER_COLOR_BIT)
-	local constants = render.constant_buffer()
-	if self.upscale_material == hash("sps") then
-		constants.sharpness = vmath.vector4(9.9, 1.0, 1.0, 1.0)
-		constants.texture_size = vmath.vector4(self.width, self.height, 1.0, 1.0)
-	end
+
+	render.enable_texture("DIFFUSE_TEXTURE", self.rt, graphics.BUFFER_TYPE_COLOR0_BIT)
+
+	self.draw_options.constants.texture_size.x = self.width
+	self.draw_options.constants.texture_size.y = self.height
+
 	render.enable_material(self.upscale_material)
-	render.draw(self.lowrez_pred, { constants = constants} )
+	render.draw(self.lowrez_pred, self.draw_options)
 	render.disable_material()
-	render.disable_texture(0, self.rt)
+	render.disable_texture("DIFFUSE_TEXTURE")
 end
 
-
+------------------------
+-- draw_controls
+------------------------
 local function draw_controls(self)
-	render.set_viewport(0, 0, render.get_window_width(), render.get_window_height())
+	render.set_viewport(0, 0, coords.window_width, coords.window_height)
 	render.set_view(IDENTITY)
-	render.set_projection(vmath.matrix4_orthographic(0, render.get_window_width(), 0, render.get_window_height(), -1, 1))
+	render.set_projection(vmath.matrix4_orthographic(0, coords.window_width, 0, coords.window_height, -1, 1))
 
-	render.enable_state(render.STATE_STENCIL_TEST)
+	render.enable_state(graphics.STATE_STENCIL_TEST)
 	render.draw(self.controls_pred)
 	--render.draw(self.text_pred)
-	render.disable_state(render.STATE_STENCIL_TEST)
-	render.disable_state(render.STATE_BLEND)
+	render.disable_state(graphics.STATE_STENCIL_TEST)
+	render.disable_state(graphics.STATE_BLEND)
 end
 
+------------------------
+-- update
+------------------------
 function update(self)
-	local window_width = render.get_window_width()
-	local window_height = render.get_window_height()
-	coords.window_width, coords.window_height = window_width, window_height
-	clear(self, window_width, window_height)
-	render.enable_render_target(self.rt)
+	coords.window_width  = render.get_window_width()
+	coords.window_height = render.get_window_height()
+
+	clear(self)
+
+	-- draw game to render target
+	render.set_render_target(self.rt)
 	draw_game(self)
-	render.disable_render_target(self.rt)
+
+	-- draw to screen
+	render.set_render_target(render.RENDER_TARGET_DEFAULT)
 	draw_upscaled(self)
 	draw_controls(self)
 end
 
 function on_message(self, message_id, message)
 	if message_id == CLEAR_COLOR then
-		self.clear_buffers[render.BUFFER_COLOR_BIT] = message.color
+		self.clear_buffers[graphics.BUFFER_TYPE_COLOR0_BIT] = message.color
 	elseif message_id == SET_VIEW_PROJECTION then
 		self.view = message.view
 	elseif message_id == SET_UPSCALE_MATERIAL then

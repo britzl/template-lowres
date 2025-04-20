@@ -8,3 +8,9 @@ Thumbs.db
 .project
 .cproject
 builtins
+/.editor_settings
+build_config.json
+.clang-format
+compile_commands.json
+manifest.private.der
+manifest.public.der
