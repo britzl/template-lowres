@@ -12,7 +12,7 @@ M.scale_snap = true
 
 
 function M.get_zoom()
-	local zoom = math.min(M.window_width / M.game_width, M.window_height / M.game_height) / window.get_display_scale() -- <- TODO: Test this on actual device
+	local zoom = math.min(M.window_width / M.game_width, M.window_height / M.game_height)
 	if M.scale_snap then
 		zoom = math.max(1, math.floor(zoom))
 	end
